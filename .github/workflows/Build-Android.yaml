@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          reposity: ${{secrets.REPO_NAME}}
+          repository: ${{secrets.REPO_NAME}}
           lfs: true # 使用 LFS
 
       # Cache可以讓你之後Build更快
