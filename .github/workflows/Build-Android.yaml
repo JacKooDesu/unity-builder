@@ -22,8 +22,6 @@ on:
 jobs:
   build:
     name: Build Project
-    # currnetly Otoon is not work well on linux
-    # runs-on: ubuntu-latest
     runs-on: ${{inputs.machineType}}
     steps:
       # 查看repo
@@ -64,6 +62,7 @@ jobs:
           path: build
           retention-days: 1
 
+      # 上傳至 Slack
       - name: Upload To Slack
         uses: MeilCli/slack-upload-file@v3
         id: message

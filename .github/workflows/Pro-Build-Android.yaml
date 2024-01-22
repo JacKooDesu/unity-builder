@@ -3,6 +3,14 @@ name: Pro Build Android
 on:
   workflow_dispatch:
     inputs:
+      machineType:
+        required: true
+        type: choice
+        default: "ubuntu-latest"
+        options:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
       exportType:
         required: true
         type: choice
@@ -14,7 +22,7 @@ on:
 jobs:
   build:
     name: Build Project
-    runs-on: ubuntu-latest
+    runs-on: ${{inputs.machineType}}
     steps:
       # 查看repo
       - name: Checkout repo
@@ -54,9 +62,11 @@ jobs:
           path: build
           retention-days: 1
 
-      # - name: Discord Notify
-      #   uses: tsickert/discord-webhook@v5.3.0
-      #   with:
-      #     webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      #     content: "### New build action completed!"
-      #     filename: build
+      # 上傳至 Slack
+      - name: Upload To Slack
+        uses: MeilCli/slack-upload-file@v3
+        id: message
+        with:
+          slack_token: ${{secrets.SLACK_TOKEN}}
+          channel_id: ${{secrets.SLACK_CHANNEL_ID}}
+          file_path: "build/Android/*.*"
