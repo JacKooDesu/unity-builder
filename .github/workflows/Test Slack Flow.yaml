@@ -1,0 +1,19 @@
+name: Test Slack Upload
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Test
+
+    runs-on: macos-13
+    steps:
+      - run: "echo test > test.txt"
+
+      - name: Upload To Slack
+        uses: MeilCli/slack-upload-file@v3
+        id: message
+        with:
+          slack_token: ${{secrets.SLACK_TOKEN}}
+          channel_id: ${{secrets.SLACK_CHANNEL_ID}}
+          file_path: "test.txt"

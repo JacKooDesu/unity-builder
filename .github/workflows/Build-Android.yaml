@@ -56,9 +56,10 @@ jobs:
           path: build
           retention-days: 1
 
-      # - name: Discord Notify
-      #   uses: tsickert/discord-webhook@v5.3.0
-      #   with:
-      #     webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      #     content: "### New build action completed!"
-      #     filename: build
+      - name: Upload To Slack
+        uses: MeilCli/slack-upload-file@v3
+        id: message
+        with:
+          slack_token: ${{secrets.SLACK_TOKEN}}
+          channel_id: ${{secrets.SLACK_CHANNEL_ID}}
+          file_path: "build/Android/*.{aab,apk}"
