@@ -70,3 +70,4 @@ jobs:
           slack_token: ${{secrets.SLACK_TOKEN}}
           channel_id: ${{secrets.SLACK_CHANNEL_ID}}
           file_path: "build/Android/*.*"
+          initial_comment: "${{secrets.REPO_NAME}} Build Complete!!"
