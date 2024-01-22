@@ -3,6 +3,14 @@ name: Build Android
 on:
   workflow_dispatch:
     inputs:
+      machineType:
+        required: true
+        type: choice
+        default: "ubuntu-latest"
+        options:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
       exportType:
         required: true
         type: choice
@@ -16,7 +24,7 @@ jobs:
     name: Build Project
     # currnetly Otoon is not work well on linux
     # runs-on: ubuntu-latest
-    runs-on: macos-13
+    runs-on: ${{inputs.machineType}}
     steps:
       # 查看repo
       - name: Checkout repo
