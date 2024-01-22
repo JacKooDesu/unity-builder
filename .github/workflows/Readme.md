@@ -8,7 +8,7 @@
 
 - GH_PAT
 
-- REOP_NAME
+- REPO_NAME
 
 - UNITY_EMAIL
 
