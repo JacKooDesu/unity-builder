@@ -1,17 +1,22 @@
 # Required Secrets
 
-- ANDROID_KEYALIAS_NAME
-
-- ANDROID_KEYALIAS_PASS
+- Build Repo Setting
   
-- ANDROID_KEYSTORE_PASS
+  - GH_PAT `(if target repo is private)`
+  
+  - REPO_NAME `(ex: JacKooDesu/unity-builder)`
 
-- GH_PAT
+- Required by build setting
+  - ANDROID_KEYALIAS_NAME `(required if build aab)`
+  
+  - ANDROID_KEYALIAS_PASS `(required if build aab)`
+    
+  - ANDROID_KEYSTORE_PASS `(required if build aab)`
 
-- REPO_NAME
+- Required by [Game-CI](https://game.ci/docs/github/activation)
 
-- UNITY_EMAIL
-
-- UNITY_LICENSE
-
-- UNITY_PASSWORD
+  - UNITY_EMAIL 
+  
+  - UNITY_LICENSE
+  
+  - UNITY_PASSWORD
