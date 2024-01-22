@@ -14,9 +14,7 @@ on:
 jobs:
   build:
     name: Build Project
-    # currnetly Otoon is not work well on linux
-    # runs-on: ubuntu-latest
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
       # 查看repo
       - name: Checkout repo
@@ -39,7 +37,7 @@ jobs:
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
