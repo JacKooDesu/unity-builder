@@ -18,9 +18,9 @@ on:
         options:
           - androidPackage
           - androidAppBundle
-      branch:
-        required: true
-        default: main
+      # branch:
+      #   required: true
+      #   default: main
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{secrets.REPO_NAME}}
-          ref: "refs/heads/${{inputs.branch}}"
+          # ref: "refs/heads/${{inputs.branch}}"
           token: ${{secrets.GH_PAT}}
           lfs: true # 使用 LFS
 
@@ -74,4 +74,4 @@ jobs:
           slack_token: ${{secrets.SLACK_TOKEN}}
           channel_id: ${{secrets.SLACK_CHANNEL_ID}}
           file_path: "build/Android/*.*"
-          initial_comment: "${{secrets.REPO_NAME}} on ${{inputs.branch}} Build Complete!!"
+          initial_comment: "${{secrets.REPO_NAME}} Build Complete!!"
