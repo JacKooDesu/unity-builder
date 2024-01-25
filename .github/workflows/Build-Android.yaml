@@ -18,6 +18,9 @@ on:
         options:
           - androidPackage
           - androidAppBundle
+      branch:
+        required: true
+        default: main
 
 jobs:
   build:
