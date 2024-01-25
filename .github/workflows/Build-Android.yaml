@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{secrets.REPO_NAME}}
-          ref: ${{input.branch}}
+          ref: ${{inputs.branch}}
           token: ${{secrets.GH_PAT}}
           lfs: true # 使用 LFS
 
