@@ -21,6 +21,13 @@ on:
       branch:
         required: true
         default: main
+      proBuild:
+        required: false
+        type: boolean
+      # 商業考量
+      noArtifact:
+        required: false
+        type: boolean
 
 jobs:
   build:
@@ -31,9 +38,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          repository: ${{secrets.REPO_NAME}}
+          repository: ${{ fromJson(secrets.SETTING).repo }}
           ref: "refs/heads/${{inputs.branch}}"
-          token: ${{secrets.GH_PAT}}
+          token: ${{ fromJson(secrets.SETTING).PAT }}
           lfs: true # 使用 LFS
 
       # Cache可以讓你之後Build更快
@@ -47,20 +54,38 @@ jobs:
 
       # 用Game-CI Builder建置專案
       - name: Build project
+        if: ${{ !inputs.proBuild }}
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
+          UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
         with:
           targetPlatform: Android
           androidExportType: ${{ inputs.exportType }}
-          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
-          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+          androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
+          androidKeyaliasName: ${{ fromJson(secrets.SETTING).keyaliasName }}
+          androidKeyaliasPass: ${{ fromJson(secrets.SETTING).keyaliasPwd }}
+
+      # Pro build
+      - name: Pro Build project
+        if: ${{ inputs.proBuild }}
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
+          UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
+        with:
+          targetPlatform: Android
+          androidExportType: ${{ inputs.exportType }}
+          androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
+          androidKeyaliasName: ${{ fromJson(secrets.SETTING).keyaliasName }}
+          androidKeyaliasPass: ${{ fromJson(secrets.SETTING).keyaliasPwd }}
 
       # 輸出成artifact
-      - uses: actions/upload-artifact@v3
+      - name: Ouput Artifact
+        if: ${{ !inputs.noArtifact }}
+        uses: actions/upload-artifact@v3
         with:
           name: Build
           path: build
@@ -71,7 +96,8 @@ jobs:
         uses: MeilCli/slack-upload-file@v3
         id: message
         with:
-          slack_token: ${{secrets.SLACK_TOKEN}}
-          channel_id: ${{secrets.SLACK_CHANNEL_ID}}
+          slack_token: ${{ fromJson(secrets.SETTING).slackToken }}
+          channel_id: ${{ fromJson(secrets.SETTING).slackChannel }}
           file_path: "build/Android/*.*"
-          initial_comment: "${{secrets.REPO_NAME}} on ${{inputs.branch}} Build Complete!!"
+          initial_comment: |
+            "`${{ fromJson(secrets.SETTING).repo }}` on `${{ inputs.branch }}` Build Complete!!"
