@@ -1,0 +1,17 @@
+name: Json Tester
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Test Checkout
+    runs-on: ubuntu-latest
+    steps:
+      # 查看repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{fromJson(secrets.SETTING).repo }}
+          token: ${{secrets.GH_PAT}}
+          lfs: true # 使用 LFS
