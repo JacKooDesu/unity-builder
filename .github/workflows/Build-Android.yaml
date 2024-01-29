@@ -28,6 +28,8 @@ on:
       noArtifact:
         required: false
         type: boolean
+      parameter:
+        required: false
 
 jobs:
   build:
@@ -61,6 +63,7 @@ jobs:
           UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
           UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
         with:
+          customParameters: ${{ inputs.parameter }}
           targetPlatform: Android
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
@@ -76,6 +79,7 @@ jobs:
           UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
           UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
         with:
+          customParameters: ${{ inputs.parameter }}
           targetPlatform: Android
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
@@ -100,4 +104,4 @@ jobs:
           channel_id: ${{ fromJson(secrets.SETTING).slackChannel }}
           file_path: "build/Android/*.*"
           initial_comment: |
-            "`${{ fromJson(secrets.SETTING).repo }}` on `${{ inputs.branch }}` Build Complete!!"
+            `${{ fromJson(secrets.SETTING).repo }}` on `${{ inputs.branch }}` Build Complete!!
