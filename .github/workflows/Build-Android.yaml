@@ -28,8 +28,9 @@ on:
       noArtifact:
         required: false
         type: boolean
-      parameter:
+      debugMode:
         required: false
+        type: boolean
 
 jobs:
   build:
@@ -63,7 +64,7 @@ jobs:
           UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
           UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
         with:
-          customParameters: ${{ inputs.parameter }}
+          customParameters: "${{ inputs.debugMode && '-Development -AllowDebugging' }}"
           targetPlatform: Android
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
@@ -79,7 +80,7 @@ jobs:
           UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
           UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
         with:
-          customParameters: ${{ inputs.parameter }}
+          customParameters: "${{ inputs.debugMode && '-Development -AllowDebugging' }}"
           targetPlatform: Android
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
