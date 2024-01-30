@@ -64,7 +64,7 @@ jobs:
           UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
           UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
         with:
-          customParameters: "${{ inputs.debugMode && '-Development -AllowDebugging' }}"
+          customParameters: "${{ inputs.debugMode && '-Development' }}"
           targetPlatform: Android
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
@@ -80,7 +80,7 @@ jobs:
           UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
           UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
         with:
-          customParameters: "${{ inputs.debugMode && '-Development -AllowDebugging' }}"
+          customParameters: "${{ inputs.debugMode && '-Development' }}"
           targetPlatform: Android
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
