@@ -1,0 +1,108 @@
+name: Production Build Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      machineType:
+        required: true
+        type: choice
+        default: "ubuntu-latest"
+        options:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+      exportType:
+        required: true
+        type: choice
+        default: "androidPackage"
+        options:
+          - androidPackage
+          - androidAppBundle
+      branch:
+        required: true
+        default: production
+      proBuild:
+        required: false
+        type: boolean
+      # 商業考量
+      noArtifact:
+        required: false
+        type: boolean
+      appVersion:
+        required: true
+        default: '1'
+
+jobs:
+  build:
+    name: Build Project
+    runs-on: ${{inputs.machineType}}
+    steps:
+      # 查看repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ fromJson(secrets.SETTING).repo }}
+          ref: "refs/heads/${{inputs.branch}}"
+          token: ${{ fromJson(secrets.SETTING).PAT }}
+          lfs: true # 使用 LFS
+
+      # Cache可以讓你之後Build更快
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # 用Game-CI Builder建置專案
+      - name: Build project
+        if: ${{ !inputs.proBuild }}
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
+          UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
+        with:
+          targetPlatform: Android
+          androidVersionCode: ${{ inputs.appVersion }}
+          androidExportType: ${{ inputs.exportType }}
+          androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
+          androidKeyaliasName: ${{ fromJson(secrets.SETTING).keyaliasName }}
+          androidKeyaliasPass: ${{ fromJson(secrets.SETTING).keyaliasPwd }}
+
+      # Pro build
+      - name: Pro Build project
+        if: ${{ inputs.proBuild }}
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ fromJson(secrets.SETTING).email }}
+          UNITY_PASSWORD: ${{ fromJson(secrets.SETTING).password }}
+        with:
+          targetPlatform: Android
+          androidVersionCode: ${{ inputs.appVersion }}
+          androidExportType: ${{ inputs.exportType }}
+          androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
+          androidKeyaliasName: ${{ fromJson(secrets.SETTING).keyaliasName }}
+          androidKeyaliasPass: ${{ fromJson(secrets.SETTING).keyaliasPwd }}
+
+      # 輸出成artifact
+      - name: Ouput Artifact
+        if: ${{ !inputs.noArtifact }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build
+          path: build
+          retention-days: 1
+
+      # 上傳至 Slack
+      - name: Upload To Slack
+        uses: MeilCli/slack-upload-file@v3
+        id: message
+        with:
+          slack_token: ${{ fromJson(secrets.SETTING).slackToken }}
+          channel_id: ${{ fromJson(secrets.SETTING).slackChannel }}
+          file_path: "build/Android/*.*"
+          initial_comment: |
+            `${{ fromJson(secrets.SETTING).repo }}` on `${{ inputs.branch }}` Build Complete!!
