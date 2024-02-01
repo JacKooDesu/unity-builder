@@ -31,9 +31,6 @@ on:
       development:
         required: false
         type: boolean
-      appVersion:
-        required: true
-        default: '1'
 
 jobs:
   build:
@@ -69,7 +66,6 @@ jobs:
         with:
           customParameters: "${{ inputs.development && '-Development' }}"
           targetPlatform: Android
-          androidVersionCode: ${{ inputs.appVersion }}
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
           androidKeyaliasName: ${{ fromJson(secrets.SETTING).keyaliasName }}
@@ -86,7 +82,6 @@ jobs:
         with:
           customParameters: "${{ inputs.development && '-Development' }}"
           targetPlatform: Android
-          androidVersionCode: ${{ inputs.appVersion }}
           androidExportType: ${{ inputs.exportType }}
           androidKeystorePass: ${{ fromJson(secrets.SETTING).keystorePwd }}
           androidKeyaliasName: ${{ fromJson(secrets.SETTING).keyaliasName }}
